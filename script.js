@@ -1,119 +1,264 @@
-// Error-free and improved calculator logic with additional functions and navigation (< >) buttons
+let expr = document.querySelector("#expression");
+let plus = document.querySelector(".plus");
+let sub = document.querySelector(".sub");
+let mul = document.querySelector(".mul");
+let divss = document.querySelector(".div");
+let final = document.querySelector("#final");
+let value = document.querySelector("#value");
+let sign = document.querySelector(".sign");
+let d = '';
+let e = '';
+let f = '';
 
-const display = document.getElementById('display');
-let currentInput = '';
-let lastResult = '';
-let cursorPos = 0;
 
-// Utility: Insert character at cursor
-function insertAtCursor(val) {
-    currentInput =
-        currentInput.slice(0, cursorPos) +
-        val +
-        currentInput.slice(cursorPos);
-    cursorPos += val.length;
-    updateDisplay();
-}
+function calculate(a, b, c) {
 
-// Utility: Move cursor
-function moveCursor(dir) {
-    if (dir === 'left' && cursorPos > 0) cursorPos--;
-    if (dir === 'right' && cursorPos < currentInput.length) cursorPos++;
-    updateDisplay();
-}
+    a = Number(a);
 
-// Utility: Update display with cursor indication
-function updateDisplay() {
-    // Show cursor as a vertical bar
-    let disp = currentInput.slice(0, cursorPos) + '|' + currentInput.slice(cursorPos);
-    display.value = disp;
-}
 
-// Utility: Clear all
-function clearAll() {
-    currentInput = '';
-    lastResult = '';
-    cursorPos = 0;
-    updateDisplay();
-}
+    c = Number(c);
 
-// Utility: Remove character at cursor (backspace)
-function backspace() {
-    if (cursorPos > 0) {
-        currentInput = currentInput.slice(0, cursorPos - 1) + currentInput.slice(cursorPos);
-        cursorPos--;
-        updateDisplay();
+
+    if (b == "+") {
+        add(a, c)
+
     }
-}
 
-// Utility: Delete character after cursor (delete)
-function deleteChar() {
-    if (cursorPos < currentInput.length) {
-        currentInput = currentInput.slice(0, cursorPos) + currentInput.slice(cursorPos + 1);
-        updateDisplay();
+    if (b == "-") {
+        subtract(a, c)
     }
+
+    if (b == "*") {
+        multiply(a, c)
+    }
+
+    if (b == "/") {
+        devide(a, c)
+    }
+
 }
 
-// Evaluate expression safely
-function calculate() {
-    try {
-        // Only allow digits, operators, decimal, and parenthesis
-        if (!/^[\d+\-*/.()% ]+$/.test(currentInput)) {
-            display.value = "Error";
-            return;
+function add(a, c) {
+    value.textContent = Number.isInteger(a + c) ? (a + c) : parseFloat((a + c).toFixed(1));
+}
+
+function subtract(a, c) {
+    value.textContent = Number.isInteger(a - c) ? (a - c) : parseFloat((a - c).toFixed(1));
+}
+
+function multiply(a, c) {
+    value.textContent = Number.isInteger(a * c) ? (a * c) : parseFloat((a * c).toFixed(1));
+}
+
+function devide(a, c) {
+    value.textContent = Number.isInteger(a / c) ? (a / c) : parseFloat((a / c).toFixed(1));
+}
+
+
+for (let i = 0; i < 11; i++) {
+    let n = document.querySelector(`.num${i}`);
+
+    n.addEventListener("click", () => {
+        if (e == '') {
+
+
+
+            d += n.textContent;
+            expr.textContent = "";
+            sign.addEventListener("click", () => {
+                if (e == '') {
+
+                    if (d > 0) {
+                        d = 0 - d;
+
+                    } else if (d < 0) {
+                        d = d - 0;
+
+                    }
+                    expr.textContent = d;
+                }
+            })
+            expr.textContent += d;
         }
-        // eslint-disable-next-line no-eval
-        let result = eval(currentInput.replace('%', '/100'));
-        if (result === undefined) result = '';
-        display.value = result;
-        lastResult = result;
-        currentInput = String(result);
-        cursorPos = currentInput.length;
-    } catch {
-        display.value = "Error";
-    }
+
+    })
+
 }
 
-// Button click handler
-function buttonClick(val) {
-    if (val === '=') {
-        calculate();
-    } else if (val === 'C') {
-        clearAll();
-    } else if (val === '←') {
-        backspace();
-    } else if (val === 'Del') {
-        deleteChar();
-    } else if (val === '<') {
-        moveCursor('left');
-    } else if (val === '>') {
-        moveCursor('right');
-    } else if (val === 'Ans') {
-        insertAtCursor(lastResult);
-    } else {
-        insertAtCursor(val);
-    }
+if (e != "") {
+
 }
 
-// Keyboard support
-display.addEventListener('keydown', (e) => {
-    if (e.key === "Enter") {
-        calculate();
-        e.preventDefault();
-    } else if (e.key === "Backspace") {
-        backspace();
-        e.preventDefault();
-    } else if (e.key === "Delete") {
-        deleteChar();
-        e.preventDefault();
-    } else if (e.key === "ArrowLeft") {
-        moveCursor('left');
-        e.preventDefault();
-    } else if (e.key === "ArrowRight") {
-        moveCursor('right');
-        e.preventDefault();
-    }
-});
 
-// Initialize
-clearAll();
+
+plus.addEventListener("click", () => {
+
+    for (let i = 0; i < 11; i++) {
+        let n = document.querySelector(`.num${i}`);
+
+        n.addEventListener("click", () => {
+
+            f += n.textContent;
+
+            sign.addEventListener("click", () => {
+                console.log("hh");
+
+                if (f > 0) {
+                    f = 0 - f;
+                } else if (f < 0) {
+                    f = f - 0;
+                }
+                expr.textContent = f;
+            })
+
+            expr.textContent = f;
+
+
+
+        })
+
+    }
+
+
+
+    e += plus.textContent;
+    expr.textContent += e;
+
+})
+
+sub.addEventListener("click", () => {
+
+    for (let i = 0; i < 11; i++) {
+        let n = document.querySelector(`.num${i}`);
+
+
+        n.addEventListener("click", () => {
+
+            f += n.textContent;
+
+            sign.addEventListener("click", () => {
+                console.log("hh");
+
+                if (f > 0) {
+                    f = 0 - f;
+                } else if (f < 0) {
+                    f = f - 0;
+                }
+                expr.textContent = f;
+            })
+
+            expr.textContent = f;
+
+
+
+        })
+
+    }
+
+    e += sub.textContent;
+    expr.textContent += e;
+
+})
+
+mul.addEventListener("click", () => {
+
+    for (let i = 0; i < 11; i++) {
+        let n = document.querySelector(`.num${i}`);
+
+        n.addEventListener("click", () => {
+
+            f += n.textContent;
+
+            sign.addEventListener("click", () => {
+                console.log("hh");
+
+                if (f > 0) {
+                    f = 0 - f;
+                } else if (f < 0) {
+                    f = f - 0;
+                }
+                expr.textContent = f;
+            })
+
+            expr.textContent = f;
+
+
+
+        })
+
+    }
+
+    e += "*";
+
+    expr.textContent += "×";
+
+
+})
+
+divss.addEventListener("click", () => {
+
+    for (let i = 0; i < 11; i++) {
+        let n = document.querySelector(`.num${i}`);
+
+
+        n.addEventListener("click", () => {
+
+            f += n.textContent;
+
+            sign.addEventListener("click", () => {
+                console.log("hh");
+
+                if (f > 0) {
+                    f = 0 - f;
+                } else if (f < 0) {
+                    f = f - 0;
+                }
+                expr.textContent = f;
+            })
+
+            expr.textContent = f;
+
+        })
+    }
+
+    e += "/";
+    expr.textContent += "÷";
+})
+
+
+
+final.addEventListener("click", () => {
+
+    if (d != "" && e != "" && f != "") {
+        calculate(d, e, f);
+    }
+})
+
+
+document.querySelector(".B").addEventListener("click", () => {
+
+    if (e == '') {
+        d = d.slice(0, -1);
+        expr.textContent = d;
+    } else if (e != '') {
+        f = f.slice(0, -1);
+        expr.textContent = f;
+    }
+
+})
+
+document.querySelector(".al").addEventListener("click", () => {
+    alert("🤖: Its Just fancy Key 😉")
+})
+
+document.querySelector(".al1").addEventListener("click", () => {
+    alert("🤖: another fancy key 🥲")
+})
+
+document.querySelector(".C").addEventListener("click", () => {
+    d = '';
+    e = '';
+    f = '';
+    expr.textContent = "Cleared...";
+    value.textContent = "";
+})
