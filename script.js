@@ -1,4 +1,4 @@
-// // Calculator-MS Improved Script
+// // Calculator-MS Improved Script with Keyboard Support
 
 const expr = document.querySelector("#expression");
 const plus = document.querySelector(".plus");
@@ -169,6 +169,73 @@ alertBtn.addEventListener("click", () => {
 });
 alertBtn1.addEventListener("click", () => {
     alert("🤖: Another fancy key 🥲");
+});
+
+// Keyboard support
+document.addEventListener("keydown", (e) => {
+    // If a modal/alert is open, ignore input
+    if (document.querySelector("dialog[open], .modal[open]")) return;
+
+    // Number input (0-9) and dot
+    if ((e.key >= "0" && e.key <= "9") || e.key === ".") {
+        if (inputState === "operand1") {
+            if (e.key !== "." || !operand1.includes(".")) {
+                operand1 += e.key;
+            }
+        } else if (inputState === "operator") {
+            inputState = "operand2";
+            if (e.key !== "." || !operand2.includes(".")) {
+                operand2 += e.key;
+            }
+        } else {
+            if (e.key !== "." || !operand2.includes(".")) {
+                operand2 += e.key;
+            }
+        }
+        updateDisplay();
+        return;
+    }
+
+    // Operators
+    if (["+", "-", "*", "/"].includes(e.key)) {
+        setOperator(e.key);
+        return;
+    }
+
+    // Enter or = for equals
+    if (e.key === "Enter" || e.key === "=") {
+        final.click();
+        return;
+    }
+
+    // Backspace key
+    if (e.key === "Backspace") {
+        backspace.click();
+        e.preventDefault(); // Prevent browser nav when input is empty
+        return;
+    }
+
+    // Escape or C or c for clear
+    if (e.key === "Escape" || e.key === "c" || e.key === "C") {
+        clearBtn.click();
+        return;
+    }
+
+    // Toggle sign: s or S
+    if (e.key === "s" || e.key === "S") {
+        sign.click();
+        return;
+    }
+
+    // Fancy alert keys: a for .al, q for .al1
+    if (e.key === "a") {
+        alertBtn.click();
+        return;
+    }
+    if (e.key === "q") {
+        alertBtn1.click();
+        return;
+    }
 });
 
 // Initialize display on load
