@@ -1,6 +1,3 @@
-
-
-
 // // Calculator-MS Improved Script
 
 const expr = document.querySelector("#expression");
