@@ -1,124 +1,168 @@
 body {
     font-family: 'SF Pro Display', 'Segoe UI', 'Roboto', 'helvetica Neue', sans-serif;
-    display: flex;
     background: linear-gradient(to bottom, #ff8554, #ff0077);
-    height: 100vh;
+    min-height: 100vh;
+    margin: 0;
+    display: flex;
     justify-content: center;
-}
-
-#screen {
-    margin-top: 7vh;
-    height: 65vh;
-    width: 40vh;
-    background: linear-gradient(to right, #3e3254, #221c2e);
-    border-radius: 25px;
-    box-shadow: 0px 0px 50px 0px rgba(0, 0, 0, 0.323);
-}
-
-#keys {
-    margin-top: -45vh;
-    height: 53vh;
-    width: 37.5vh;
-    background-color: #f7f7f7;
-    border-radius: 25px;
-    box-shadow: 0px 0px 50px 0px rgba(0, 0, 0, 0.323);
+    align-items: center;
 }
 
 #main {
     display: flex;
     flex-direction: column;
     align-items: center;
+    width: 100vw;
+    min-height: 100vh;
 }
 
-#expression{
-    color: #bbbbbb;
-    display: flex;
-    justify-content: end;
-    font-size: 12px;
-    font-weight: bold;
-    margin-bottom: 0;
+#screen {
+    margin-top: 2vh;
+    width: 90vw;
+    max-width: 370px;
+    background: linear-gradient(to right, #3e3254, #221c2e);
+    border-radius: 25px;
+    box-shadow: 0px 0px 50px 0px rgba(0, 0, 0, 0.323);
+    padding: 20px 20px 10px 20px;
 }
 
 #output {
     display: flex;
     color: #ffffff;
     justify-content: space-between;
-    margin: 0 5vh;
-    font-size: 45px;
+    align-items: flex-end;
+    font-size: 2.7rem;
     font-weight: bold;
-    margin-top: 4vh;
+    min-height: 80px;
+    margin: 0;
 }
 
 #equal {
-    margin-top: 47.5px;
-    font-size: 25px;
+    font-size: 1.1rem;
+    margin-top: 24px;
+    margin-right: 10px;
+}
+
+#numbers {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    width: 180px;
+}
+
+#expression {
+    color: #bbbbbb;
+    font-size: 1rem;
+    font-weight: bold;
+    margin: 0;
+    min-height: 20px;
+    text-align: right;
+    word-break: break-all;
 }
 
 #value {
-    margin-top: 0;
+    margin: 0;
+    font-size: 1.9rem;
+    min-height: 24px;
+    text-align: right;
+    word-break: break-all;
 }
 
-#keys #one {
+#keys {
+    margin-top: -4vh;
+    background-color: #f7f7f7;
+    border-radius: 25px;
+    box-shadow: 0px 0px 50px 0px rgba(0, 0, 0, 0.13);
+    width: 90vw;
+    max-width: 340px;
+    padding: 16px 10px 10px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.row {
     display: flex;
     justify-content: space-between;
-    margin: 2vh 5vh 0 5vh;
-    font-weight: bolder;
-    font-size: 20px;
+    gap: 10px;
 }
 
-#keys #two {
-    display: flex;
-    justify-content: space-between;
-    margin: 0 5vh 0 5vh;
-    font-weight: bolder;
-    font-size: 20px;
+.btn {
+    flex: 1 1 0;
+    background: none;
+    border: none;
+    outline: none;
+    font-size: 1.35rem;
+    font-weight: bold;
+    border-radius: 12px;
+    padding: 13px 0;
+    color: #3e3254;
+    transition: background 0.16s, color 0.16s;
+    user-select: none;
 }
 
-#operand {
+.btn.operator {
     color: rgb(255, 0, 144);
-    font-weight: bolder;
 }
 
-#C {
+#clear {
     color: rgb(43, 0, 255);
-    font-weight: bolder;
 }
 
-#operan {
+#fancy-left, #fancy-right {
     color: rgb(7, 229, 74);
-    font-weight: bolder;
 }
 
 #dot {
     color: #ff8554;
 }
 
-#num {
-    color: #3e3254;
-    font-weight: bolder;
-}
-
-
-#one p:hover,
-#two p:hover,
-#final p:hover {
+.btn:active, .btn:hover {
+    background: #d900ff22;
     color: #d900ff;
     cursor: pointer;
 }
 
 #final {
-    background: linear-gradient(to left, #ff8554, #ff0077);
-    width: 125px;
-    height: 35px;
-    border-radius: 20px;
-    margin-top: -2.5vh;
+    margin-top: 15px;
     display: flex;
     justify-content: center;
+    width: 90vw;
+    max-width: 180px;
 }
 
-#final p {
-    margin-top: 0;
-    font-size: 25px;
-    font-weight: bolder;
+#equals {
+    width: 100%;
+    background: linear-gradient(to left, #ff8554, #ff0077);
     color: #f7f7f7;
+    font-size: 1.6rem;
+    font-weight: bolder;
+    border-radius: 20px;
+    padding: 12px 0;
+    border: none;
+    cursor: pointer;
 }
+
+@media (max-width: 500px) {
+    #screen, #keys, #final {
+        max-width: 97vw;
+        min-width: 0;
+    }
+    #numbers {
+        width: 100px;
+    }
+    #output {
+        font-size: 1.7rem;
+    }
+    #value {
+        font-size: 1.1rem;
+    }
+    .btn {
+        font-size: 1rem;
+        padding: 9px 0;
+    }
+    #equals {
+        font-size: 1.1rem;
+        padding: 9px 0;
+    }
+    }
