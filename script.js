@@ -1,264 +1,178 @@
-let expr = document.querySelector("#expression");
-let plus = document.querySelector(".plus");
-let sub = document.querySelector(".sub");
-let mul = document.querySelector(".mul");
-let divss = document.querySelector(".div");
-let final = document.querySelector("#final");
-let value = document.querySelector("#value");
-let sign = document.querySelector(".sign");
-let d = '';
-let e = '';
-let f = '';
+const exprDisplay = document.querySelector("#expression");
+const valueDisplay = document.querySelector("#value");
+const keys = document.querySelector("#keys");
+const equalsBtn = document.getElementById("equals");
+const clearBtn = document.getElementById("clear");
+const backspaceBtn = document.getElementById("backspace");
+const dotBtn = document.getElementById("dot");
+const negateBtn = document.getElementById("negate");
+const fancyLeft = document.getElementById("fancy-left");
+const fancyRight = document.getElementById("fancy-right");
 
+let expression = "";
+let result = "";
+let justEvaluated = false;
 
-function calculate(a, b, c) {
+// Utility functions
+function updateDisplay() {
+    exprDisplay.textContent = expression;
+    valueDisplay.textContent = result ? result : "";
+}
 
-    a = Number(a);
-
-
-    c = Number(c);
-
-
-    if (b == "+") {
-        add(a, c)
-
+function appendToExpression(char) {
+    if (justEvaluated) {
+        // Start new calculation after result
+        expression = "";
+        result = "";
+        justEvaluated = false;
     }
-
-    if (b == "-") {
-        subtract(a, c)
-    }
-
-    if (b == "*") {
-        multiply(a, c)
-    }
-
-    if (b == "/") {
-        devide(a, c)
-    }
-
+    expression += char;
+    updateDisplay();
 }
 
-function add(a, c) {
-    value.textContent = Number.isInteger(a + c) ? (a + c) : parseFloat((a + c).toFixed(1));
+function isOperator(char) {
+    return ["+", "-", "×", "÷"].includes(char);
 }
 
-function subtract(a, c) {
-    value.textContent = Number.isInteger(a - c) ? (a - c) : parseFloat((a - c).toFixed(1));
-}
-
-function multiply(a, c) {
-    value.textContent = Number.isInteger(a * c) ? (a * c) : parseFloat((a * c).toFixed(1));
-}
-
-function devide(a, c) {
-    value.textContent = Number.isInteger(a / c) ? (a / c) : parseFloat((a / c).toFixed(1));
-}
-
-
-for (let i = 0; i < 11; i++) {
-    let n = document.querySelector(`.num${i}`);
-
-    n.addEventListener("click", () => {
-        if (e == '') {
-
-
-
-            d += n.textContent;
-            expr.textContent = "";
-            sign.addEventListener("click", () => {
-                if (e == '') {
-
-                    if (d > 0) {
-                        d = 0 - d;
-
-                    } else if (d < 0) {
-                        d = d - 0;
-
-                    }
-                    expr.textContent = d;
-                }
-            })
-            expr.textContent += d;
+function safeEval(expr) {
+    // Replace × and ÷ with * and /
+    const safeExpr = expr.replace(/×/g, "*").replace(/÷/g, "/");
+    try {
+        let val = Function(`"use strict";return (${safeExpr})`)();
+        // Handle rounding for floats
+        if (typeof val === "number" && !Number.isInteger(val)) {
+            val = parseFloat(val.toFixed(8));
         }
-
-    })
-
+        return val;
+    } catch {
+        return "Error";
+    }
 }
 
-if (e != "") {
+// Input handling
+keys.addEventListener("click", (e) => {
+    const btn = e.target.closest(".btn");
+    if (!btn) return;
 
-}
-
-
-
-plus.addEventListener("click", () => {
-
-    for (let i = 0; i < 11; i++) {
-        let n = document.querySelector(`.num${i}`);
-
-        n.addEventListener("click", () => {
-
-            f += n.textContent;
-
-            sign.addEventListener("click", () => {
-                console.log("hh");
-
-                if (f > 0) {
-                    f = 0 - f;
-                } else if (f < 0) {
-                    f = f - 0;
-                }
-                expr.textContent = f;
-            })
-
-            expr.textContent = f;
-
-
-
-        })
-
+    const val = btn.textContent;
+    if (btn.classList.contains("num")) {
+        // Prevent leading zeros unless after a decimal
+        if (
+            (expression.endsWith("0") && 
+            (expression.length === 1 || isOperator(expression.at(-2))) &&
+            val === "0" &&
+            !expression.endsWith("."))
+        ) {
+            return;
+        }
+        appendToExpression(val);
+    } else if (btn.classList.contains("operator")) {
+        if (!expression) return;
+        // Prevent two operators in a row
+        if (isOperator(expression.at(-1))) {
+            expression = expression.slice(0, -1);
+        }
+        appendToExpression(val);
+    } else if (btn.id === "dot") {
+        // Don't allow two dots in a number
+        const parts = expression.split(/[\+\-\×\÷]/);
+        if (parts.length && parts.at(-1).includes(".")) return;
+        if (!expression || isOperator(expression.at(-1))) {
+            appendToExpression("0.");
+        } else {
+            appendToExpression(".");
+        }
+    } else if (btn.id === "backspace") {
+        if (justEvaluated) {
+            expression = "";
+            result = "";
+            justEvaluated = false;
+        } else {
+            expression = expression.slice(0, -1);
+        }
+        updateDisplay();
     }
+});
 
-
-
-    e += plus.textContent;
-    expr.textContent += e;
-
-})
-
-sub.addEventListener("click", () => {
-
-    for (let i = 0; i < 11; i++) {
-        let n = document.querySelector(`.num${i}`);
-
-
-        n.addEventListener("click", () => {
-
-            f += n.textContent;
-
-            sign.addEventListener("click", () => {
-                console.log("hh");
-
-                if (f > 0) {
-                    f = 0 - f;
-                } else if (f < 0) {
-                    f = f - 0;
-                }
-                expr.textContent = f;
-            })
-
-            expr.textContent = f;
-
-
-
-        })
-
+equalsBtn.addEventListener("click", () => {
+    if (!expression) return;
+    // Replace trailing operator
+    let exprTrimmed = expression;
+    if (isOperator(exprTrimmed.at(-1))) {
+        exprTrimmed = exprTrimmed.slice(0, -1);
     }
+    const evalResult = safeEval(exprTrimmed);
+    result = evalResult;
+    updateDisplay();
+    justEvaluated = true;
+});
 
-    e += sub.textContent;
-    expr.textContent += e;
+clearBtn.addEventListener("click", () => {
+    expression = "";
+    result = "";
+    updateDisplay();
+    justEvaluated = false;
+});
 
-})
-
-mul.addEventListener("click", () => {
-
-    for (let i = 0; i < 11; i++) {
-        let n = document.querySelector(`.num${i}`);
-
-        n.addEventListener("click", () => {
-
-            f += n.textContent;
-
-            sign.addEventListener("click", () => {
-                console.log("hh");
-
-                if (f > 0) {
-                    f = 0 - f;
-                } else if (f < 0) {
-                    f = f - 0;
-                }
-                expr.textContent = f;
-            })
-
-            expr.textContent = f;
-
-
-
-        })
-
+// Negate the last number
+negateBtn.addEventListener("click", () => {
+    if (!expression) return;
+    // Find last number in the expression
+    const match = expression.match(/([^\+\-\×\÷]+)$/);
+    if (match) {
+        const num = match[1];
+        let start = expression.lastIndexOf(num);
+        let negated = "";
+        if (num.startsWith("-")) {
+            negated = num.slice(1);
+        } else {
+            negated = "-" + num;
+        }
+        expression = expression.slice(0, start) + negated;
+        updateDisplay();
     }
+});
 
-    e += "*";
+// Fancy keys
+fancyLeft.addEventListener("click", () => {
+    alert("🤖: It's just a fancy key 😉");
+});
+fancyRight.addEventListener("click", () => {
+    alert("🤖: Another fancy key 🥲");
+});
 
-    expr.textContent += "×";
-
-
-})
-
-divss.addEventListener("click", () => {
-
-    for (let i = 0; i < 11; i++) {
-        let n = document.querySelector(`.num${i}`);
-
-
-        n.addEventListener("click", () => {
-
-            f += n.textContent;
-
-            sign.addEventListener("click", () => {
-                console.log("hh");
-
-                if (f > 0) {
-                    f = 0 - f;
-                } else if (f < 0) {
-                    f = f - 0;
-                }
-                expr.textContent = f;
-            })
-
-            expr.textContent = f;
-
-        })
+// Allow keyboard input
+document.addEventListener("keydown", (e) => {
+    if (e.key >= "0" && e.key <= "9") {
+        appendToExpression(e.key);
+    } else if (["+", "-", "*", "/", "Enter", "=", ".", "Backspace"].includes(e.key)) {
+        if (e.key === "+") appendToExpression("+");
+        else if (e.key === "-") appendToExpression("-");
+        else if (e.key === "*") appendToExpression("×");
+        else if (e.key === "/") appendToExpression("÷");
+        else if (e.key === ".") {
+            const parts = expression.split(/[\+\-\×\÷]/);
+            if (parts.length && parts.at(-1).includes(".")) return;
+            if (!expression || isOperator(expression.at(-1))) {
+                appendToExpression("0.");
+            } else {
+                appendToExpression(".");
+            }
+        }
+        else if (e.key === "Backspace") {
+            if (justEvaluated) {
+                expression = "";
+                result = "";
+                justEvaluated = false;
+            } else {
+                expression = expression.slice(0, -1);
+            }
+            updateDisplay();
+        }
+        else if (e.key === "Enter" || e.key === "=") {
+            equalsBtn.click();
+        }
     }
+});
 
-    e += "/";
-    expr.textContent += "÷";
-})
-
-
-
-final.addEventListener("click", () => {
-
-    if (d != "" && e != "" && f != "") {
-        calculate(d, e, f);
-    }
-})
-
-
-document.querySelector(".B").addEventListener("click", () => {
-
-    if (e == '') {
-        d = d.slice(0, -1);
-        expr.textContent = d;
-    } else if (e != '') {
-        f = f.slice(0, -1);
-        expr.textContent = f;
-    }
-
-})
-
-document.querySelector(".al").addEventListener("click", () => {
-    alert("🤖: Its Just fancy Key 😉")
-})
-
-document.querySelector(".al1").addEventListener("click", () => {
-    alert("🤖: another fancy key 🥲")
-})
-
-document.querySelector(".C").addEventListener("click", () => {
-    d = '';
-    e = '';
-    f = '';
-    expr.textContent = "Cleared...";
-    value.textContent = "";
-})
+updateDisplay();
